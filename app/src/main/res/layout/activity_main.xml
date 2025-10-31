@@ -7,14 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <org.osmdroid.views.MapView
-        android:id="@+id/map_view"
+    <!-- Google Map -->
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Search card ở trên cùng -->
+    <!-- App Title & Notification Button -->
     <LinearLayout
-        android:id="@+id/top_controls"
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -22,71 +24,105 @@
         android:padding="16dp"
         android:layout_gravity="top">
 
-        <!-- Ô search -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- App Title -->
+        <TextView
+            android:id="@+id/tv_app_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="4dp">
+            android:text="Community Alert"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:shadowColor="#80000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-
-                <ImageView
-                    android:id="@+id/ic_search"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="16dp"
-                    android:src="@drawable/ic_baseline_search_24"
-                    android:tint="?attr/colorOnSurface" />
-
-                <EditText
-                    android:id="@+id/edt_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/ic_search"
-                    android:layout_marginStart="12dp"
-                    android:background="@android:color/transparent"
-                    android:hint="Search for a location..."
-                    android:imeOptions="actionSearch"
-                    android:singleLine="true" />
-            </RelativeLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Nút thông báo -->
+        <!-- Notification Button -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_notify_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp">
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp">
 
             <ImageButton
                 android:id="@+id/btn_notify"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_circle_notifications_24"
+                android:padding="8dp"
                 android:contentDescription="Notifications" />
         </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 
+    <!-- Bottom Navigation Bar -->
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:navigationIcon="@null"
         app:fabAlignmentMode="center"
         app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="20dp" />
+        app:fabCradleRoundedCornerRadius="20dp"
+        app:fabCradleVerticalOffset="8dp">
 
-    <!-- FAB ở giữa -->
+        <!-- Bottom Actions -->
+        <LinearLayout
+            android:id="@+id/bottom_text_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <!-- My Alerts Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAlerts"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="MY ALERTS"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:minHeight="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingVertical="8dp"
+                android:drawableTop="@drawable/ic_baseline_warning_24"
+                android:drawablePadding="4dp" />
+
+            <!-- Spacer for FAB -->
+            <Space
+                android:layout_width="@dimen/fab_gap"
+                android:layout_height="1dp" />
+
+            <!-- Profile Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnProfile"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="PROFILE"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:minHeight="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingVertical="8dp"
+                android:drawableTop="@drawable/ic_baseline_person_24"
+                android:drawablePadding="4dp" />
+        </LinearLayout>
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <!-- Create Alert FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_create_alert"
         android:layout_width="wrap_content"
@@ -94,55 +130,8 @@
         android:src="@drawable/ic_baseline_add_24"
         app:layout_anchor="@id/bottom_app_bar"
         app:layout_anchorGravity="center|bottom"
-        app:maxImageSize="30dp"
-        app:tint="@color/white" />
-
-
-    <LinearLayout
-        android:id="@+id/bottom_text_actions"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        app:layout_anchor="@id/bottom_app_bar"
-        app:layout_anchorGravity="bottom">
-
-        <!-- ALERTS bên trái -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAlerts"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MY ALERTS"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:minHeight="0dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:paddingVertical="6dp" />
-
-        <!-- SPACER ở giữa để chừa chỗ cho FAB + cradle -->
-        <Space
-            android:layout_width="@dimen/fab_gap"
-            android:layout_height="1dp" />
-
-        <!-- Community bên phải -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnProfile"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="COMMUNITY"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:minHeight="0dp"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:paddingVertical="6dp" />
-    </LinearLayout>
+        app:maxImageSize="32dp"
+        app:tint="@color/white"
+        android:contentDescription="Create Alert" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

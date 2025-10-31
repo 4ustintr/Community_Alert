@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">CommunityAlert</string>
+
+    <!-- Google Sign In - Replace with your actual client ID from Firebase Console -->
+    <string name="default_web_client_id">431611808571-m62f6dvghhpl3r4l0vl5jmf8rohnr5c7.apps.googleusercontent.com</string>
+
+    <!-- App strings -->
+    <string name="welcome_message">Stay connected, together</string>
+    <string name="login_title">Welcome Back</string>
+    <string name="register_title">Create Account</string>
+    <string name="alert_posted">Alert posted successfully!</string>
+    <string name="alert_confirmed">Alert confirmed!</string>
 </resources>
