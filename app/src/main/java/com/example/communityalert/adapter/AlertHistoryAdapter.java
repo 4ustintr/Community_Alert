@@ -10,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.communityalert.R;
 import com.example.communityalert.data.db.Alert;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class AlertHistoryAdapter extends RecyclerView.Adapter<AlertHistoryAdapter.AlertViewHolder> {
 
@@ -41,9 +44,42 @@ public class AlertHistoryAdapter extends RecyclerView.Adapter<AlertHistoryAdapte
     public void onBindViewHolder(@NonNull AlertViewHolder holder, int position) {
         Alert alert = alertList.get(position);
 
-        holder.tvTitle.setText(alert.getType()); // Hiển thị Loại
-        holder.tvLocation.setText(alert.getDescription()); // Hiển thị Mô tả
+        // Display type
+        holder.tvTitle.setText(alert.getType());
 
+        // Display description
+        holder.tvLocation.setText(alert.getDescription());
+
+        // Display formatted time
+        if (alert.getTimestamp() > 0) {
+            String timeAgo = getTimeAgo(alert.getTimestamp());
+            holder.tvTime.setText(timeAgo);
+        } else {
+            holder.tvTime.setText("Just now");
+        }
+    }
+
+    private String getTimeAgo(long timestamp) {
+        long now = System.currentTimeMillis();
+        long diff = now - timestamp;
+
+        long seconds = diff / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+
+        if (seconds < 60) {
+            return "Just now";
+        } else if (minutes < 60) {
+            return minutes + "m ago";
+        } else if (hours < 24) {
+            return hours + "h ago";
+        } else if (days < 7) {
+            return days + "d ago";
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return sdf.format(new Date(timestamp));
+        }
     }
 
     @Override

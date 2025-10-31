@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    TODO: Before running the app, you need a Google Maps API key.
+
+    To get one, follow these steps:
+
+    1. Go to the Google Cloud Console: https://console.cloud.google.com/
+    2. Create a new project or select an existing one
+    3. Enable the following APIs:
+       - Maps SDK for Android
+       - Geocoding API (for location search)
+       - Places API (optional, for better search)
+    4. Go to APIs & Services > Credentials
+    5. Click "Create Credentials" > "API Key"
+    6. Copy the API key and replace YOUR_API_KEY_HERE below
+    7. (Optional but recommended) Restrict the API key to Android apps only
+
+    For more detailed instructions, visit:
+    https://developers.google.com/maps/documentation/android-sdk/get-api-key
+    -->
+
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
+        AIzaSyAtKsqk_GAhBaroMkj1xNeCy-UlkDFcpSE
+    </string>
+</resources>
