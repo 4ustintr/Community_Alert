@@ -3,11 +3,17 @@ package com.example.communityalert;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -23,14 +29,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -109,27 +119,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng hanoi = new LatLng(21.0285, 105.8542);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hanoi, 12));
 
+        // Marker click listener
         mMap.setOnMarkerClickListener(marker -> {
             String alertId = (String) marker.getTag();
             if (alertId != null) {
-                Alert selectedAlert = null;
-                for (Alert alert : alertList) {
-                    if (alert.getId().equals(alertId)) {
-                        selectedAlert = alert;
-                        break;
-                    }
-                }
-
-                if (selectedAlert != null) {
-                    showAlertDetails(selectedAlert);
-                }
+                showAlertDetails(alertId);
                 return true;
             }
             return false;
         });
 
+        // Map click listener for creating new alerts
+        mMap.setOnMapClickListener(latLng -> {
+            showCreateAlertDialog(latLng);
+        });
+
+        // Enable My Location
         checkLocationPermission();
 
+        // Load alerts
         loadAlerts();
     }
 
@@ -230,11 +238,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 LatLng position = new LatLng(alert.getLatitude(), alert.getLongitude());
 
-                // Create marker with alert type as title and description as snippet
                 MarkerOptions options = new MarkerOptions()
                         .position(position)
                         .title(alert.getType())
-                        .snippet("Tap for details")
+                        .snippet(alert.getDescription())
                         .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColor(alert.getType())));
 
                 Marker marker = mMap.addMarker(options);
@@ -247,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-        Log.d(TAG, "Displayed " + alertMarkers.size() + " alert markers on map");
+        Log.d(TAG, "Displayed " + alertMarkers.size() + " markers");
     }
 
     private float getMarkerColor(String type) {
@@ -267,10 +274,72 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void showAlertDetails(Alert alert) {
+    private void showAlertDetails(String alertId) {
         Intent intent = new Intent(this, AlertDetailActivity.class);
-        intent.putExtra("alertId", alert.getId());
+        intent.putExtra("alertId", alertId);
         startActivity(intent);
+    }
+
+    private void showCreateAlertDialog(LatLng location) {
+        // Inflate custom dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_confirm_location, null);
+
+        // Find views
+        TextView tvAddress = dialogView.findViewById(R.id.tv_address);
+        MaterialButton btnCreateAlert = dialogView.findViewById(R.id.btn_create_alert);
+        MaterialButton btnCancel = dialogView.findViewById(R.id.btn_cancel);
+
+        // Get address from coordinates
+        getAddressFromLocation(location, tvAddress);
+
+        // Create dialog
+        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+
+        // Set button click listeners
+        btnCreateAlert.setOnClickListener(v -> {
+            dialog.dismiss();
+            // Navigate to CreateAlertActivity with location
+            Intent intent = new Intent(MainActivity.this, CreateAlertActivity.class);
+            intent.putExtra("latitude", location.latitude);
+            intent.putExtra("longitude", location.longitude);
+            intent.putExtra("fromMapClick", true);
+            startActivity(intent);
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        // Show dialog
+        dialog.show();
+    }
+
+    private void getAddressFromLocation(LatLng location, TextView tvAddress) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    location.latitude, location.longitude, 1);
+            
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String addressText = address.getAddressLine(0);
+                if (addressText != null) {
+                    tvAddress.setText("Address: " + addressText);
+                } else {
+                    tvAddress.setText("Address: " + String.format(Locale.getDefault(),
+                            "%.6f, %.6f", location.latitude, location.longitude));
+                }
+            } else {
+                tvAddress.setText("Address: " + String.format(Locale.getDefault(),
+                        "%.6f, %.6f", location.latitude, location.longitude));
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Geocoder error", e);
+            tvAddress.setText("Address: " + String.format(Locale.getDefault(),
+                    "%.6f, %.6f", location.latitude, location.longitude));
+        }
     }
 
     @Override

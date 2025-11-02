@@ -57,6 +57,7 @@ public class CreateAlertActivity extends AppCompatActivity {
     private Uri selectedImageUri;
     private double currentLatitude = 0;
     private double currentLongitude = 0;
+    private boolean locationFromMapClick = false;
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
@@ -72,6 +73,18 @@ public class CreateAlertActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Check if location is passed from map click
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("fromMapClick", false)) {
+            currentLatitude = intent.getDoubleExtra("latitude", 0);
+            currentLongitude = intent.getDoubleExtra("longitude", 0);
+            locationFromMapClick = true;
+
+            Toast.makeText(this, "Location set from map: " +
+                    String.format("%.4f, %.4f", currentLatitude, currentLongitude),
+                    Toast.LENGTH_SHORT).show();
+        }
 
         // Initialize views
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -106,8 +119,10 @@ public class CreateAlertActivity extends AppCompatActivity {
                 }
         );
 
-        // Get current location
-        checkLocationPermission();
+        // Get current location only if not from map click
+        if (!locationFromMapClick) {
+            checkLocationPermission();
+        }
 
         // Add photo button
         btnAddPhoto.setOnClickListener(v -> showImagePickerDialog());
@@ -168,8 +183,8 @@ public class CreateAlertActivity extends AppCompatActivity {
                         currentLongitude = location.getLongitude();
                         Log.d(TAG, "Got last location: " + currentLatitude + ", " + currentLongitude);
                         Toast.makeText(this, "Location acquired: " +
-                            String.format("%.4f, %.4f", currentLatitude, currentLongitude),
-                            Toast.LENGTH_SHORT).show();
+                                String.format("%.4f, %.4f", currentLatitude, currentLongitude),
+                                Toast.LENGTH_SHORT).show();
                     } else {
                         Log.w(TAG, "Last location is null, requesting fresh location");
                         Toast.makeText(this, "Getting your location, please wait...", Toast.LENGTH_SHORT).show();
@@ -269,7 +284,11 @@ public class CreateAlertActivity extends AppCompatActivity {
 
         // Check location
         if (currentLatitude == 0 && currentLongitude == 0) {
-            Toast.makeText(this, "Getting location, please wait...", Toast.LENGTH_SHORT).show();
+            if (locationFromMapClick) {
+                Toast.makeText(this, "Error: Invalid location from map", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Getting location, please wait...", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
@@ -281,6 +300,8 @@ public class CreateAlertActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
             Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            btnPostAlert.setEnabled(true);
+            btnPostAlert.setText("Post Alert");
             return;
         }
 
@@ -352,10 +373,10 @@ public class CreateAlertActivity extends AppCompatActivity {
 
         // Request a single fresh location update with high accuracy
         com.google.android.gms.location.LocationRequest locationRequest =
-            com.google.android.gms.location.LocationRequest.create()
-                .setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setNumUpdates(1)
-                .setExpirationDuration(15000); // 15 seconds timeout
+                com.google.android.gms.location.LocationRequest.create()
+                        .setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY)
+                        .setNumUpdates(1)
+                        .setExpirationDuration(15000); // 15 seconds timeout
 
         fusedLocationClient.requestLocationUpdates(
                 locationRequest,
@@ -368,16 +389,16 @@ public class CreateAlertActivity extends AppCompatActivity {
                             currentLongitude = location.getLongitude();
                             Log.d(TAG, "Got fresh location: " + currentLatitude + ", " + currentLongitude);
                             Toast.makeText(CreateAlertActivity.this,
-                                "Location acquired: " + String.format("%.4f, %.4f", currentLatitude, currentLongitude),
-                                Toast.LENGTH_SHORT).show();
+                                    "Location acquired: " + String.format("%.4f, %.4f", currentLatitude, currentLongitude),
+                                    Toast.LENGTH_SHORT).show();
                         } else {
                             Log.w(TAG, "Fresh location is also null");
                             Toast.makeText(CreateAlertActivity.this,
-                                "Could not get location. Please:\n" +
-                                "1. Make sure GPS is ON\n" +
-                                "2. Go near a window or outdoors\n" +
-                                "3. Wait a few seconds and try again",
-                                Toast.LENGTH_LONG).show();
+                                    "Could not get location. Please:\n" +
+                                            "1. Make sure GPS is ON\n" +
+                                            "2. Go near a window or outdoors\n" +
+                                            "3. Wait a few seconds and try again",
+                                    Toast.LENGTH_LONG).show();
                         }
                     }
                 },
