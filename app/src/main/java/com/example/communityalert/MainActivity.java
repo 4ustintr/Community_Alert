@@ -109,20 +109,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng hanoi = new LatLng(21.0285, 105.8542);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(hanoi, 12));
 
-        // Marker click listener
         mMap.setOnMarkerClickListener(marker -> {
             String alertId = (String) marker.getTag();
             if (alertId != null) {
-                showAlertDetails(alertId);
+                Alert selectedAlert = null;
+                for (Alert alert : alertList) {
+                    if (alert.getId().equals(alertId)) {
+                        selectedAlert = alert;
+                        break;
+                    }
+                }
+
+                if (selectedAlert != null) {
+                    showAlertDetails(selectedAlert);
+                }
                 return true;
             }
             return false;
         });
 
-        // Enable My Location
         checkLocationPermission();
 
-        // Load alerts
         loadAlerts();
     }
 
@@ -223,10 +230,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 LatLng position = new LatLng(alert.getLatitude(), alert.getLongitude());
 
+                // Create marker with alert type as title and description as snippet
                 MarkerOptions options = new MarkerOptions()
                         .position(position)
                         .title(alert.getType())
-                        .snippet(alert.getDescription())
+                        .snippet("Tap for details")
                         .icon(BitmapDescriptorFactory.defaultMarker(getMarkerColor(alert.getType())));
 
                 Marker marker = mMap.addMarker(options);
@@ -239,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-        Log.d(TAG, "Displayed " + alertMarkers.size() + " markers");
+        Log.d(TAG, "Displayed " + alertMarkers.size() + " alert markers on map");
     }
 
     private float getMarkerColor(String type) {
@@ -259,9 +267,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void showAlertDetails(String alertId) {
+    private void showAlertDetails(Alert alert) {
         Intent intent = new Intent(this, AlertDetailActivity.class);
-        intent.putExtra("alertId", alertId);
+        intent.putExtra("alertId", alert.getId());
         startActivity(intent);
     }
 
