@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="Alert Details"
+        app:title="Chi tiết cảnh báo"
         app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
 
     <androidx.core.widget.NestedScrollView
@@ -25,7 +25,7 @@
             <ImageView
                 android:id="@+id/img_alert"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="250dp"
                 android:scaleType="centerCrop"
                 android:background="@android:color/darker_gray"
                 android:contentDescription="Alert image"
@@ -48,7 +48,7 @@
                         android:id="@+id/tv_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Flood"
+                        android:text="Lũ lụt"
                         android:textSize="24sp"
                         android:textStyle="bold"
                         android:textColor="@color/design_default_color_error"
@@ -72,7 +72,7 @@
                         android:id="@+id/tv_location"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lat: 21.0285, Lng: 105.8542"
+                        android:text="Vĩ độ: 21.0285, Kinh độ: 105.8542"
                         android:textSize="14sp"
                         android:drawableStart="@drawable/ic_baseline_warning_24"
                         android:drawablePadding="8dp"
@@ -84,13 +84,15 @@
                         android:layout_height="wrap_content"
                         android:text="30/10/2024 14:30"
                         android:textSize="14sp"
+                        android:drawableStart="@drawable/ic_baseline_clock_24"
+                        android:drawablePadding="8dp"
                         android:layout_marginBottom="8dp"/>
 
                     <TextView
                         android:id="@+id/tv_user_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Posted by: John Doe"
+                        android:text="Đăng bởi: John Doe"
                         android:textSize="14sp"
                         android:drawableStart="@drawable/ic_baseline_person_24"
                         android:drawablePadding="8dp"
@@ -100,7 +102,7 @@
                         android:id="@+id/tv_confirm_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5 confirmations"
+                        android:text="5 lượt xác nhận"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="@color/design_default_color_primary"/>
@@ -111,7 +113,7 @@
                 android:id="@+id/btn_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Confirm Alert"
+                android:text="Xác nhận cảnh báo"
                 app:cornerRadius="12dp"
                 android:layout_marginTop="16dp"/>
 

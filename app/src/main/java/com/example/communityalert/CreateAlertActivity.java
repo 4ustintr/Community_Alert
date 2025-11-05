@@ -106,81 +106,23 @@ public class CreateAlertActivity extends AppCompatActivity {
                 }
         );
 
-        // Get current location
-        checkLocationPermission();
+        currentLatitude = getIntent().getDoubleExtra("latitude", 0);
+        currentLongitude = getIntent().getDoubleExtra("longitude", 0);
+
+        // 2. Kiểm tra nếu không nhận được tọa độ
+        if (currentLatitude == 0 && currentLongitude == 0) {
+            Toast.makeText(this, "Vui lòng chọn vị trí.", Toast.LENGTH_LONG).show();
+            finish(); // Đóng Activity nếu không có vị trí
+            return;
+        } else {
+            Log.d(TAG, "Vị trí nhận được: " + currentLatitude + ", " + currentLongitude);
+        }
 
         // Add photo button
         btnAddPhoto.setOnClickListener(v -> showImagePickerDialog());
 
         // Post alert button
         btnPostAlert.setOnClickListener(v -> postAlert());
-    }
-
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        } else {
-            getCurrentLocation();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @androidx.annotation.NonNull String[] permissions, @androidx.annotation.NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
-            } else {
-                Toast.makeText(this, "Location permission required to create alert", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
-            } else {
-                Toast.makeText(this, "Storage permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.w(TAG, "Location permission not granted");
-            Toast.makeText(this, "Location permission required. Please enable in settings.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        Log.d(TAG, "Requesting current location for alert creation...");
-
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    if (location != null) {
-                        currentLatitude = location.getLatitude();
-                        currentLongitude = location.getLongitude();
-                        Log.d(TAG, "Got last location: " + currentLatitude + ", " + currentLongitude);
-                        Toast.makeText(this, "Location acquired: " +
-                            String.format("%.4f, %.4f", currentLatitude, currentLongitude),
-                            Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.w(TAG, "Last location is null, requesting fresh location");
-                        Toast.makeText(this, "Getting your location, please wait...", Toast.LENGTH_SHORT).show();
-                        requestFreshLocationForAlert();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to get location", e);
-                    Toast.makeText(this, "Failed to get location: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    requestFreshLocationForAlert();
-                });
     }
 
     private void showImagePickerDialog() {
@@ -342,46 +284,4 @@ public class CreateAlertActivity extends AppCompatActivity {
                 });
     }
 
-    private void requestFreshLocationForAlert() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        Log.d(TAG, "Requesting fresh location update...");
-
-        // Request a single fresh location update with high accuracy
-        com.google.android.gms.location.LocationRequest locationRequest =
-            com.google.android.gms.location.LocationRequest.create()
-                .setPriority(com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setNumUpdates(1)
-                .setExpirationDuration(15000); // 15 seconds timeout
-
-        fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                new com.google.android.gms.location.LocationCallback() {
-                    @Override
-                    public void onLocationResult(com.google.android.gms.location.LocationResult locationResult) {
-                        if (locationResult != null && locationResult.getLastLocation() != null) {
-                            android.location.Location location = locationResult.getLastLocation();
-                            currentLatitude = location.getLatitude();
-                            currentLongitude = location.getLongitude();
-                            Log.d(TAG, "Got fresh location: " + currentLatitude + ", " + currentLongitude);
-                            Toast.makeText(CreateAlertActivity.this,
-                                "Location acquired: " + String.format("%.4f, %.4f", currentLatitude, currentLongitude),
-                                Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.w(TAG, "Fresh location is also null");
-                            Toast.makeText(CreateAlertActivity.this,
-                                "Could not get location. Please:\n" +
-                                "1. Make sure GPS is ON\n" +
-                                "2. Go near a window or outdoors\n" +
-                                "3. Wait a few seconds and try again",
-                                Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-                null
-        );
-    }
 }

@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Confirm Location"
+            android:text="Xác nhận vị trí"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -38,14 +38,14 @@
             android:id="@+id/tv_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Address: 123 Main St, Anytown USA"
+            android:text="Vị trí: 123 Main St, Anytown USA"
             android:layout_marginTop="8dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_create_alert"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="Create Alert"
+            android:text="Tạo cảnh báo"
             app:cornerRadius="12dp"
             android:layout_marginTop="16dp"/>
 
@@ -54,7 +54,8 @@
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cancel" />
+            android:textSize="17sp"
+            android:text="Hủy" />
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

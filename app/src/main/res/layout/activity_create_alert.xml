@@ -11,7 +11,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="Create New Alert"
+        app:title="Tạo cảnh báo mới"
         app:navigationIcon="@drawable/ic_baseline_arrow_back_24" />
 
     <androidx.core.widget.NestedScrollView
@@ -27,7 +27,7 @@
             <ImageView
                 android:id="@+id/img_map_snapshot"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="250dp"
                 android:background="@android:color/darker_gray"
                 android:scaleType="centerCrop"
                 android:contentDescription="Map Snapshot"/>
@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="What's happening?"
+                android:text="phân loại cảnh báo"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -52,7 +52,7 @@
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Flood"
+                    android:text="Ngập úng"
                     app:chipIcon="@drawable/ic_baseline_warning_24"/>
 
                 <com.google.android.material.chip.Chip
@@ -60,34 +60,34 @@
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Traffic" />
+                    android:text="Tắc đường" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_accident"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Accident"/>
+                    android:text="Tai nạn"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_fire"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fire"/>
+                    android:text="Đám cháy"/>
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chip_other"
                     style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Other"/>
+                    android:text="Khác"/>
             </com.google.android.material.chip.ChipGroup>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Details"
+                android:text="Mô tả chi tiết"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -97,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="Provide a brief description..."
+                android:hint="Mô tả ngắn về sự cố...."
                 app:boxCornerRadiusBottomEnd="8dp"
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
@@ -116,14 +116,14 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="+ Add Photo/Video"
+                android:text="+ Thêm ảnh/video"
                 android:layout_marginTop="16dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_post_alert"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Post Alert"
+                android:text="Đăng cảnh báo"
                 app:cornerRadius="12dp"
                 android:layout_marginTop="32dp"/>
 

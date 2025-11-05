@@ -18,9 +18,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Community Alert"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/ic_logo_round"
+        android:label="Safe Alert"
+        android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CommunityAlert">
 
@@ -32,8 +32,7 @@
         <!-- Splash Activity (Launcher) -->
         <activity
             android:name=".SplashActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -63,6 +62,11 @@
             android:name=".CreateAlertActivity"
             android:exported="false"
             android:theme="@style/Theme.CommunityAlert" />
+        <!-- Confirm Location Activity -->
+        <activity
+            android:name=".ConfirmLocationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CommunityAlert" />
 
         <!-- My Alert Activity -->
         <activity
@@ -73,6 +77,12 @@
         <!-- Alert Detail Activity -->
         <activity
             android:name=".AlertDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CommunityAlert" />
+
+        <!-- Profile Activity -->
+        <activity
+            android:name=".ProfileActivity"
             android:exported="false"
             android:theme="@style/Theme.CommunityAlert" />
 

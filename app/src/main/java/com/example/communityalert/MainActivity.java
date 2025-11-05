@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private GoogleMap mMap;
+    private ListenerRegistration alertListener;
     private FusedLocationProviderClient fusedLocationClient;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -83,9 +85,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
         });
 
-        // Community Button
+        // Profile Button
         findViewById(R.id.btnProfile).setOnClickListener(v -> {
-            Toast.makeText(this, "Community feature coming soon", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
         });
 
         // Notification Button
@@ -119,11 +122,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return false;
         });
 
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                Intent intent = new Intent(MainActivity.this, ConfirmLocationActivity.class);
+
+                // Gửi tọa độ người dùng vừa nhấn qua Intent
+                intent.putExtra("latitude", latLng.latitude);
+                intent.putExtra("longitude", latLng.longitude);
+
+                startActivity(intent);
+            }
+        });
+
         // Enable My Location
         checkLocationPermission();
 
-        // Load alerts
-        loadAlerts();
+        listenForAlerts();
     }
 
     private void checkLocationPermission() {
@@ -185,26 +200,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to get location", e));
     }
 
-    private void loadAlerts() {
-        db.collection("alerts")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        alertList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+    private void listenForAlerts() {
+        if (db == null) return;
+
+        // Bắt đầu lắng nghe collection "alerts"
+        alertListener = db.collection("alerts")
+                .addSnapshotListener((snapshots, e) -> {
+
+                    // Xử lý lỗi (nếu có)
+                    if (e != null) {
+                        Log.w(TAG, "Lỗi khi lắng nghe alerts", e);
+                        Toast.makeText(this, "Không thể tải cảnh báo (listener failed)", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Nếu không có lỗi, bắt đầu xử lý dữ liệu
+                    if (snapshots != null) {
+                        alertList.clear(); // Xóa danh sách cục bộ
+
+                        // Lặp qua tất cả dữ liệu nhận được
+                        for (QueryDocumentSnapshot document : snapshots) {
                             try {
                                 Alert alert = document.toObject(Alert.class);
                                 alert.setId(document.getId());
                                 alertList.add(alert);
-                            } catch (Exception e) {
-                                Log.w(TAG, "Error parsing alert: " + document.getId(), e);
+                            } catch (Exception parseError) {
+                                Log.w(TAG, "Lỗi khi parsing alert: " + document.getId(), parseError);
                             }
                         }
+
+                        // Gọi hàm vẽ lại bản đồ
                         displayAlertsOnMap();
-                        Log.d(TAG, "Loaded " + alertList.size() + " alerts");
+                        Log.d(TAG, "Đã tải (real-time) " + alertList.size() + " alerts");
+
                     } else {
-                        Log.w(TAG, "Error loading alerts", task.getException());
-                        Toast.makeText(this, "Could not load alerts", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Không tìm thấy alert nào (snapshot rỗng).");
                     }
                 });
     }
@@ -268,8 +298,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
-        if (mMap != null) {
-            loadAlerts();
-        }
     }
+
 }

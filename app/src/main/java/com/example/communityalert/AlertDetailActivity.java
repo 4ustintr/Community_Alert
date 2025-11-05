@@ -48,7 +48,7 @@ public class AlertDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Alert Details");
+        getSupportActionBar().setTitle("Chi tiết cảnh báo");
         toolbar.setNavigationOnClickListener(v -> finish());
 
         // Initialize views
@@ -119,10 +119,10 @@ public class AlertDetailActivity extends AppCompatActivity {
         tvTime.setText(time);
 
         // User name
-        tvUserName.setText("Posted by: " + currentAlert.getUserName());
+        tvUserName.setText("Đăng bởi: " + currentAlert.getUserName());
 
         // Confirm count
-        tvConfirmCount.setText(currentAlert.getConfirmCount() + " confirmations");
+        tvConfirmCount.setText(currentAlert.getConfirmCount() + " lượt xác nhận");
 
         // Image
         if (currentAlert.getImageUrl() != null && !currentAlert.getImageUrl().isEmpty()) {
@@ -149,7 +149,7 @@ public class AlertDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     currentAlert.setConfirmCount(newCount);
                     tvConfirmCount.setText(newCount + " confirmations");
-                    Toast.makeText(this, "Alert confirmed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Xác nhận cảnh báo!", Toast.LENGTH_SHORT).show();
                     btnConfirm.setEnabled(true);
                     btnConfirm.setText("Confirm Alert");
                 })
