@@ -4,28 +4,38 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.communityalert.R;
 import com.example.communityalert.data.db.Alert;
+import com.google.android.material.button.MaterialButton;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class AlertHistoryAdapter extends RecyclerView.Adapter<AlertHistoryAdapter.AlertViewHolder> {
+public class AlertHistoryAdapter extends RecyclerView.Adapter<AlertHistoryAdapter.ViewHolder> {
 
     private Context context;
     private List<Alert> alertList;
-    private OnItemClickListener listener;
+    private OnItemClickListener onItemClickListener;
+    private OnEditClickListener onEditClickListener;
+    private OnDeleteClickListener onDeleteClickListener;
 
     public interface OnItemClickListener {
         void onItemClick(Alert alert);
     }
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
+
+    public interface OnEditClickListener {
+        void onEditClick(Alert alert);
+    }
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Alert alert);
     }
 
     public AlertHistoryAdapter(Context context, List<Alert> alertList) {
@@ -33,53 +43,63 @@ public class AlertHistoryAdapter extends RecyclerView.Adapter<AlertHistoryAdapte
         this.alertList = alertList;
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
+    public void setOnEditClickListener(OnEditClickListener listener) {
+        this.onEditClickListener = listener;
+    }
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        this.onDeleteClickListener = listener;
+    }
+
     @NonNull
     @Override
-    public AlertViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_alert_history, parent, false);
-        return new AlertViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AlertViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Alert alert = alertList.get(position);
 
-        // Display type
-        holder.tvTitle.setText(alert.getType());
+        holder.tvAlertType.setText(alert.getType());
+        holder.tvDescription.setText(alert.getDescription());
+        holder.tvConfirmCount.setText(alert.getConfirmCount() + " confirmations");
 
-        // Display description
-        holder.tvLocation.setText(alert.getDescription());
+        // Format location
+        String location = String.format(Locale.getDefault(), "Lat: %.4f, Lng: %.4f",
+                alert.getLatitude(), alert.getLongitude());
+        holder.tvLocation.setText(location);
 
-        // Display formatted time
-        if (alert.getTimestamp() > 0) {
-            String timeAgo = getTimeAgo(alert.getTimestamp());
-            holder.tvTime.setText(timeAgo);
-        } else {
-            holder.tvTime.setText("Just now");
-        }
-    }
+        // Format timestamp
+        Date date = new Date(alert.getTimestamp());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        holder.tvTimestamp.setText(sdf.format(date));
 
-    private String getTimeAgo(long timestamp) {
-        long now = System.currentTimeMillis();
-        long diff = now - timestamp;
+        // Item click listener
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(alert);
+            }
+        });
 
-        long seconds = diff / 1000;
-        long minutes = seconds / 60;
-        long hours = minutes / 60;
-        long days = hours / 24;
+        // Edit button click listener
+        holder.btnEdit.setOnClickListener(v -> {
+            if (onEditClickListener != null) {
+                onEditClickListener.onEditClick(alert);
+            }
+        });
 
-        if (seconds < 60) {
-            return "Just now";
-        } else if (minutes < 60) {
-            return minutes + "m ago";
-        } else if (hours < 24) {
-            return hours + "h ago";
-        } else if (days < 7) {
-            return days + "d ago";
-        } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            return sdf.format(new Date(timestamp));
-        }
+        // Delete button click listener
+        holder.btnDelete.setOnClickListener(v -> {
+            if (onDeleteClickListener != null) {
+                onDeleteClickListener.onDeleteClick(alert);
+            }
+        });
     }
 
     @Override
@@ -87,27 +107,19 @@ public class AlertHistoryAdapter extends RecyclerView.Adapter<AlertHistoryAdapte
         return alertList.size();
     }
 
-    public class AlertViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgIcon, imgChevron;
-        TextView tvTitle, tvLocation, tvTime;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvAlertType, tvDescription, tvLocation, tvTimestamp, tvConfirmCount;
+        MaterialButton btnEdit, btnDelete;
 
-        public AlertViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgIcon = itemView.findViewById(R.id.img_alert_icon);
-            imgChevron = itemView.findViewById(R.id.img_chevron);
-            tvTitle = itemView.findViewById(R.id.tv_alert_title);
-            tvLocation = itemView.findViewById(R.id.tv_alert_location);
-            tvTime = itemView.findViewById(R.id.tv_alert_time);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(alertList.get(position));
-                    }
-                }
-            });
+            tvAlertType = itemView.findViewById(R.id.tv_alert_type);
+            tvDescription = itemView.findViewById(R.id.tv_description);
+            tvLocation = itemView.findViewById(R.id.tv_location);
+            tvTimestamp = itemView.findViewById(R.id.tv_timestamp);
+            tvConfirmCount = itemView.findViewById(R.id.tv_confirm_count);
+            btnEdit = itemView.findViewById(R.id.btn_edit);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }
 }
