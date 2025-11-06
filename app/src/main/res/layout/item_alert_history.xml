@@ -1,58 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
-
-    <ImageView
-        android:id="@+id/img_alert_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_baseline_warning_24"
-        android:padding="8dp"
-        android:layout_centerVertical="true"/>
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_toEndOf="@id/img_alert_icon"
-        android:layout_toStartOf="@id/tv_alert_time"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp">
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_alert_title"
-            android:layout_width="wrap_content"
+        <!-- Header with type and status -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Flood"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
+            <TextView
+                android:id="@+id/tv_alert_type"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Flood"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/design_default_color_error" />
+
+            <TextView
+                android:id="@+id/tv_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 hours ago"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray" />
+
+        </LinearLayout>
+
+        <!-- Description -->
         <TextView
-            android:id="@+id/tv_alert_location"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Main Street"
-            android:textSize="14sp"/>
+            android:text="Heavy flooding on main street"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Location and confirm count -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lat: 21.0285, Lng: 105.8542"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:drawableStart="@drawable/ic_baseline_location_on_24"
+                android:drawablePadding="4dp" />
+
+            <TextView
+                android:id="@+id/tv_confirm_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 confirmations"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/design_default_color_primary" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="Edit"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/design_default_color_primary"
+                app:cornerRadius="8dp"
+                android:layout_marginEnd="8dp"
+                android:minWidth="80dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textSize="14sp"
+                style="@style/Widget.Material3.Button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="Delete"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/design_default_color_error"
+                app:cornerRadius="8dp"
+                android:minWidth="80dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:textSize="14sp"
+                style="@style/Widget.Material3.Button" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_alert_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2m ago"
-        android:layout_toStartOf="@id/img_chevron"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"/>
-
-    <ImageView
-        android:id="@+id/img_chevron"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"/>
-</RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
