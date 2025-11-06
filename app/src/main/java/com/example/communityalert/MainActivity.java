@@ -276,13 +276,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (type == null) return BitmapDescriptorFactory.HUE_VIOLET;
 
         switch (type) {
-            case "Flood":
+            case "Ngập úng":
                 return BitmapDescriptorFactory.HUE_BLUE;
-            case "Fire":
+            case "Đám cháy":
                 return BitmapDescriptorFactory.HUE_ORANGE;
-            case "Traffic":
+            case "Tắc đường":
                 return BitmapDescriptorFactory.HUE_YELLOW;
-            case "Accident":
+            case "Tai nạn":
                 return BitmapDescriptorFactory.HUE_RED;
             default:
                 return BitmapDescriptorFactory.HUE_VIOLET;

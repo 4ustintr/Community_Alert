@@ -125,14 +125,14 @@ public class MyAlertActivity extends AppCompatActivity {
 
     private void showDeleteConfirmDialog(Alert alert) {
         new AlertDialog.Builder(this)
-                .setTitle("Delete Alert")
-                .setMessage("Are you sure you want to delete this alert?\n\n" +
-                        "Type: " + alert.getType() + "\n" +
-                        "Description: " + alert.getDescription())
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setTitle("Xác nhận xóa cảnh báo")
+                .setMessage("Bạn có chắc muốn xóa cảnh báo này không?\n\n" +
+                        "Loại cảnh báo: " + alert.getType() + "\n" +
+                        "Mô tả: " + alert.getDescription())
+                .setPositiveButton("Xóa", (dialog, which) -> {
                     deleteAlert(alert);
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Huỷ", null)
                 .show();
     }
 
